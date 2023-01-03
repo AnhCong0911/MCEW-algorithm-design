@@ -14,6 +14,7 @@ class Point:
         self.x = x
         self.y = y
 
+    # Tính khoảng cách đề-các giữa 2 points
     def distance(self, other):
         dx = self.x - other.x
         dy = self.y - other.y
@@ -30,13 +31,15 @@ class Node(Point):
         self.comp_list = [] # list of Node
         self.thoa_hiep = thoa_hiep
         
+    # DUY
     def cost(self, _node):
         # code here
-        a = 0
+        # Tính cost theo yêu cầu đề bài
+        # cost = round(0.3 x distance())
     
+    # X
     def thoa_hiep(self):
         #code here
-        b = 0
     
 class Backbone(Point):
     def __init__(self, x, y):
@@ -74,14 +77,16 @@ def save_point_list_into_csv_file(_list):
         for point in _list:
             writer.writerow(point.get())
 
-# Creat bachbone_list, node_list from point_list
+# HIEP
+# Creat bachbone_list, node_list from point_list, set weight cho cac node
 # Input: point_list
 # Output: b_list, n_list
-def create_node_list(_list):
+def create_blist_nlist(_list):
     b_list = []
     n_list = []
     # code here: use get_index()
-   
+
+# DUY 
 # Find S - Tập node con của backbone b    
 def find_S(_blist, _nlist):
     for n in _nlist:
@@ -97,46 +102,55 @@ def find_S(_blist, _nlist):
         draw_link(n, backbone_of_n)
         backbone_of_n.S.append(n)
 
+# DUONG
 # Tìm node hàng xóm (neighbor) của từng node trong tập N
 # & tính khoảng cách hàng xóm ~ cost(Ni, Nj)
 # Input: N list
 # Output:
 def find_neighbor(_nlist):
     # code here
-    a = 0
-
-# Tìm thỏa hiệp của từng node trong tập N, duyệt tìm TH min
+    
+# DUY
+# Tìm thỏa hiệp của từng node trong tập N, duyệt tìm TH min => Theo pseudocode
 # Input: N list
 # Output:
 def find_thoa_hiep(_nlist):
     # code here
 
-def update_thoa_hiep():
+# HIEP
+def update_thoa_hiep(_nodei, _nodej):
     # code here
 
+# DUY
 # Input: Node i, Node j
 # Output: True if accept, otherwise False
 def weight_condition(_nodei, _nodej):
     # code here
 
+# DUONG
 # Input: Node
 # Output: True/False    
 def jump_condition(_node):
     # code here
 
+# HIEP
+# Ghép
 def connect_link(_nodei, _nodej):
     draw_link(_nodei, _nodej)
     _nodei.previous = _nodej
     remove_link(_nodei, _nodei.center)
     _nodei.center = _nodej.center
 
+# HIEP
+# Bỏ
 def ignore_link(_nodei, _nodej):
     # code here
 
+# DUONG
 def is_finish_algorithm():
     # code here
     
-
+# CONG
 def MCEW( _nlist, _blist):
     find_neighbor(_nlist)
     min_thoa_hiep = MAX
