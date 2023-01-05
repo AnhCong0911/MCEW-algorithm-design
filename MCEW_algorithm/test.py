@@ -30,8 +30,8 @@ ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)
 
 # Add the points to the plot
-ax.plot(point1.x, point1.y, 'o')
-ax.plot(point2.x, point2.y, 'o')
+ax.plot(point1.x, point1.y, 'ok')
+ax.plot(point2.x, point2.y, 'og')
 
 # Draw a line between the points
-#ax.plot([point1.x, point2.x], [point1.y, point2.y], 'r-')
+ax.plot([point1.x, point2.x], [point1.y, point2.y], 'r-')

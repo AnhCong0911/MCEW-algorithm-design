@@ -1,22 +1,38 @@
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
+from my_constant import *
+
 
 # create a plane contains backbones, nodes
 # Input: backbone_list, node_list
-def create_plane(_blist, __nlist):
+def create_plane():
     # code here
+    # Create a figure and a subplot
+    fig, ax = plt.subplots()
+
+    # Set the limits of the subplot
+    ax.set_xlim(0, X_MAX)
+    ax.set_ylim(0, Y_MAX)
+    
+    return fig, ax
 
 # create a point
 # Input: ( x, y)
-def create_point( _x, _y):
+#def create_point( _axes, _x, _y):
     # code here
     
-def mark_node():
-    # code here
     
-def mark_backbone():
+def visualize_node( _axes, _x, _y):
     # code here
+    _axes.plot(_x, _y, 'ok')
+    
+def visualize_backbone( _axes, _x, _y):
+    # code here
+    _axes.plot(_x, _y, 'og')
 
-def draw_link(_point1, _point2):
+def draw_link( _axes, _point1, _point2):
     # code here
+    _axes.plot([_point1.x, _point2.x], [_point1.y, _point2.y], 'r-')
     
-def remove_link(_point1, _point2)
+#def remove_link(_point1, _point2):
+    

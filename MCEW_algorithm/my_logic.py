@@ -38,7 +38,7 @@ class Node(Point):
         # cost = round(0.3 x distance())
     
     # X
-    def thoa_hiep(self):
+    #def thoa_hiep(self):
         #code here
     
 class Backbone(Point):
@@ -77,11 +77,20 @@ def save_point_list_into_csv_file(_list):
         for point in _list:
             writer.writerow(point.get())
 
+def get_point_list():
+    point_list = []
+    with open('point_list.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            point_list.append(row)
+    return point_list
+
 # HIEP
 # Creat bachbone_list, node_list from point_list, set weight cho cac node
+# vẽ các node và backbone lên mặt phẳng
 # Input: point_list
 # Output: b_list, n_list
-def create_blist_nlist(_list):
+def create_and_visualize_blist_nlist(_list):
     b_list = []
     n_list = []
     # code here: use get_index()
@@ -99,7 +108,7 @@ def find_S(_blist, _nlist):
                 backbone_of_n = b
         n.center_dis = min_center
         n.center = backbone_of_n
-        draw_link(n, backbone_of_n)
+        draw_link(axes, n, backbone_of_n)
         backbone_of_n.S.append(n)
 
 # DUONG
