@@ -28,11 +28,11 @@ def visualize_node( _axes, _x, _y):
     
 def visualize_backbone( _axes, _x, _y):
     # code here
-    _axes.plot(_x, _y, 'og')
+    _axes.plot(_x, _y, 'or')
 
 def draw_link( _axes, _point1, _point2):
     # code here
-    _axes.plot([_point1.x, _point2.x], [_point1.y, _point2.y], 'r-')
+    _axes.plot([_point1.x, _point2.x], [_point1.y, _point2.y], 'g-')
     
 #def remove_link(_point1, _point2):
     

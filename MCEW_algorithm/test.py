@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import math
+import math, csv
 import matplotlib.pyplot as plt
-
+from my_constant import *
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -19,26 +19,9 @@ class Point:
         dy = self.y - other.y
         return math.sqrt(dx**2 + dy**2)
 
-point1 = Point(1, 2)
-point2 = Point(3, 4)
+with open('point_list.csv', 'r') as f:
+    reader = csv.reader(f)
+    for row in reader:
 
-# Create a figure and a subplot
-fig, ax = plt.subplots()
-
-# Set the limits of the subplot
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 10)
-
-# Add the points to the plot
-ax.plot(point1.x, point1.y, 'ok')
-ax.plot(point2.x, point2.y, 'og')
-
-# Draw a line between the points
-ax.plot([point1.x, point2.x], [point1.y, point2.y], 'r-')
-
-list1 = [1, 2 , 3, 4, 5, 6, 7, 8, 9, 10]
-list2 = [1, 2, 3]
-list3 = []
-
-print(list3)
-
+        print(type(row))
+        print(type(x_int), type(y_int))
