@@ -35,3 +35,10 @@ ax.plot(point2.x, point2.y, 'og')
 
 # Draw a line between the points
 ax.plot([point1.x, point2.x], [point1.y, point2.y], 'r-')
+
+list1 = [1, 2 , 3, 4, 5, 6, 7, 8, 9, 10]
+list2 = [1, 2, 3]
+list3 = []
+
+print(list3)
+

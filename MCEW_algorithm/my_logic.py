@@ -107,8 +107,8 @@ def find_S(_blist, _nlist):
                 min_center = nb_dis
                 backbone_of_n = b
         n.center_dis = min_center
-        n.center = backbone_of_n
-        draw_link(axes, n, backbone_of_n)
+        n.center = backbone_of_n # final min distance 
+        draw_link(axes, n, backbone_of_n) # gọi hàm không có axes
         backbone_of_n.S.append(n)
 
 # DUONG
@@ -118,6 +118,24 @@ def find_S(_blist, _nlist):
 # Output:
 def find_neighbor(_nlist):
     # code here
+
+# Tìm hàng xóm của 1 _node
+# Hàng xóm: (Nodes in Nlist) - (_node $ comp_list(_node))    
+def find_neighbor_of_node(_node, _nlist):
+    temp1 = []
+    temp1 += _node.comp_list
+    temp1.append(_node)
+    temp2 = [i for i in _nlist if i not in set(temp1)]
+    # code here
+    neighbor_of_node = None
+    neighbor_distance = MAX
+    for n in temp2:
+        dis = _node.distance(n)
+        if(dis < neighbor_distance):
+            neighbor_distance = dis
+            neighbor_of_node = n
+    _node.neighbor = neighbor_of_node
+    _node.neighbor_dis = neighbor_distance    
     
 # DUY
 # Tìm thỏa hiệp của từng node trong tập N, duyệt tìm TH min => Theo pseudocode
