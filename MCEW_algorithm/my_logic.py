@@ -27,9 +27,12 @@ class Node(Point):
         self.center = center # Backbone
         self.center_dis = -1
         self.previous = previous # Point
+        self.neighbor = neighbor
         self.neighbor_dis = -1
+        self.checked_neighbor = [] # list of neighbor is checked
         self.comp_list = [] # list of Node
-        self.thoa_hiep = thoa_hiep
+        self.trade_off = trade_off
+        
         
     # DUY
     def cost(self, _node):
@@ -123,7 +126,7 @@ def find_neighbor(_nlist):
 # Hàng xóm: (Nodes in Nlist) - (_node $ comp_list(_node))    
 def find_neighbor_of_node(_node, _nlist):
     temp1 = []
-    temp1 += _node.comp_list
+    temp1 = _node.comp_list + _node.checked_neighbor
     temp1.append(_node)
     temp2 = [i for i in _nlist if i not in set(temp1)]
     # code here
@@ -141,9 +144,42 @@ def find_neighbor_of_node(_node, _nlist):
 # Tìm thỏa hiệp của từng node trong tập N, duyệt tìm TH min => Theo pseudocode
 # Input: N list
 # Output:
-def find_thoa_hiep(_nlist):
+def find_thoa_hiep(_node):
     # code here
+    cost_ij = round(0.3 * _node.distance(_node.neighbor))
+    comp_cost = comp_cost(_node)
+    trade_off = cost_ij - comp_cost
+    _node.trade_off = trade_off
+    return trade_off
 
+def min_trade_off(_nlist):
+    min_value = MAX
+    temp_node = None
+    for n in _nlist:
+        if(n.trade_off < min_value):
+            min_value = n.trade_off
+            temp_node = n
+    return temp_node, min_value        
+    
+
+# Tính cost từ _node, và comp_list cua _node den center 
+def comp_cost(_node):
+    temp = []
+    temp.append(_node)
+    temp += _node.comp_list
+    center = _node.center
+    min_dis = MAX
+    min_node = None
+    for n in temp:
+        dis = center.distance(n) 
+        if(dis < min_dis):
+            min_dis = dis
+            min_node = n
+    # Tinh cost
+    return round(0.3 * min_dis)
+    
+    
+    
 # HIEP
 def update_thoa_hiep(_nodei, _nodej):
     # code here
@@ -153,7 +189,16 @@ def update_thoa_hiep(_nodei, _nodej):
 # Output: True if accept, otherwise False
 def weight_condition(_nodei, _nodej):
     # code here
+    comp_wi = 
+    if()
 
+def compute_comp_w(_node):
+    weight = _node.w
+    if(_node.comp_list.len() != 0):
+        for n in _node.comp_list:
+            weight += n.w
+    return w
+        
 # DUONG
 # Input: Node
 # Output: True/False    
@@ -172,6 +217,10 @@ def connect_link(_nodei, _nodej):
 # Bỏ
 def ignore_link(_nodei, _nodej):
     # code here
+    _nodei.checked_neighbor.append(_nodej)
+    _nodej.checked_neighbor.append(_nodei)
+
+    
 
 # DUONG
 def is_finish_algorithm():
