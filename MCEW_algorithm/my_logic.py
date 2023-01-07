@@ -29,12 +29,12 @@ class Node(Point):
                  previous=None, neighbor=None, neighbor_dis=-1,
                  trade_off=None):
         super().__init__(x, y)
-        self.w = 1
+        self.w = w
         self.center = center  # Backbone
-        self.center_dis = -1
-        self.previous = previous  # Point
+        self.center_dis = center_dis
+        self.previous = previous  # Node
         self.neighbor = neighbor
-        self.neighbor_dis = -1
+        self.neighbor_dis = neighbor_dis
         self.nonlink_checked_neighbor = []  # list of neighbor is checked
         self.comp_list = []  # list of Node
         self.trade_off = trade_off
@@ -67,9 +67,11 @@ class Node(Point):
     def update_component_list(self, other_node):
         self.comp_list.append(other_node)
         self.comp_list += other_node.comp_list
-    # X
-    # def thoa_hiep(self):
-        # code here
+    
+    def compute_trade_off(self):
+        cost_ij = round(0.3 * self.distance(self.neighbor))
+        min_node, min_component_cost = comp_cost(self)
+        self.trade_off = cost_ij - min_component_cost # Thoa hiep duoc tinh toan o day
 
 
 class Backbone(Point):
@@ -128,6 +130,28 @@ def get_point_list():
 # Input: point_list
 # Output: b_list, n_list
 
+# test: 10 Points
+def create_and_visualize_blist_nlist_test(_axes, _list):
+    b_list = []
+    n_list = []
+    b_index = [2, 5, 8]
+    n1_index = [3, 6]
+    n2_index = [9]
+    n_index = n1_index + n2_index
+    for i in range(MAX_POINTS):
+        x, y = _list[i].get()
+        if i in b_index:
+            b_list.append(Backbone(x, y))
+            visualize_backbone(_axes, x, y)
+        else:
+            visualize_node(_axes, x, y)
+            if i in n1_index:
+                n_list.append(Node(x, y, w=2))
+            elif i in n2_index:
+                n_list.append(Node(x, y, w=3))
+            else:
+                n_list.append(Node(x, y))
+    return b_list, n_list
 
 def create_and_visualize_blist_nlist(_axes, _list):
     b_list = []
@@ -182,25 +206,7 @@ def find_S(_axes, _blist, _nlist):
 def find_neighbor(_nlist):
     # code here
     for n in _nlist:
-        find_neighbor_of_node(n, _nlist)
-
-# # Tìm hàng xóm của 1 _node
-# # Hàng xóm: (Nodes in Nlist) - (_node $ comp_list(_node))
-# def find_neighbor_of_node(_node, _nlist):
-#     temp1 = []
-#     temp1 = _node.comp_list + _node.checked_neighbor
-#     temp1.append(_node)
-#     temp2 = [i for i in _nlist if i not in set(temp1)]
-#     # code here
-#     neighbor_of_node = None
-#     neighbor_distance = MAX
-#     for n in temp2:
-#         dis = _node.distance(n)
-#         if(dis < neighbor_distance):
-#             neighbor_distance = dis
-#             neighbor_of_node = n
-#     _node.neighbor = neighbor_of_node
-#     _node.neighbor_dis = neighbor_distance
+        n.find_neighbor_of_node(_nlist)
 
 # DUY
 # Tìm thỏa hiệp của từng node trong tập N, duyệt tìm TH min => Theo pseudocode
@@ -208,13 +214,13 @@ def find_neighbor(_nlist):
 # Output:
 
 
-def compute_trade_off(_node):
-    # code here
-    cost_ij = round(0.3 * _node.distance(_node.neighbor))
-    component_cost = comp_cost(_node)
-    trade_off = cost_ij - component_cost
-    _node.trade_off = trade_off
-    return trade_off
+# def compute_trade_off(_node):
+#     # code here
+#     cost_ij = round(0.3 * _node.distance(_node.neighbor))
+#     min_node, min_component_cost = comp_cost(_node)
+#     trade_off = cost_ij - min_component_cost
+#     _node.trade_off = trade_off
+#     return trade_off
 
 # Input: Nlist
 # Output: Node, min_trade_off
@@ -231,6 +237,7 @@ def min_trade_off(_nlist):
 
 
 # Tính cost từ _node, và comp_list cua _node den center
+# Output: min_node, min_cost
 def comp_cost(_node):
     temp = []
     temp.append(_node)
@@ -244,7 +251,7 @@ def comp_cost(_node):
             min_dis = dis
             min_node = n
     # Tinh cost
-    return round(0.3 * min_dis)
+    return min_node, round(0.3 * min_dis)
 
 
 # HIEP
@@ -262,17 +269,17 @@ def weight_condition(_nodei, _nodej, W):
     comp_wj = compute_comp_w(_nodej)
     w = comp_wi + comp_wj
     if(w <= W):
-        return true
+        return True
     else:
-        return false
+        return False
 
 
 def compute_comp_w(_node):
     weight = _node.w
-    if(_node.comp_list.len() != 0):
+    if(len(_node.comp_list) != 0):
         for n in _node.comp_list:
             weight += n.w
-    return w
+    return weight
 
 # DUONG
 # Input: Node, MAX_STEP
@@ -282,9 +289,9 @@ def compute_comp_w(_node):
 def jump_condition(_node, MAX_STEP):
     # code here
     if(compute_jumpstep(_node) <= MAX_STEP):
-        return true
+        return True
     else:
-        return false
+        return False
 
 # Tinh buoc nhay cua _node
 
@@ -326,7 +333,7 @@ def update_nodej(_nodei, _nodej):
 def remove_link(_axes, _nodei, _nodej):
     _axes.plot([_nodei.x, _nodej.x], [_nodei.y, _nodej.y], 'w-')
     _axes.plot(_nodei.x, _nodei.y, 'ok')
-    _axes.plot(_nodej.x, _nodej.y, 'og')
+    _axes.plot(_nodej.x, _nodej.y, 'or')
 
 # HIEP
 # Bỏ
