@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import math
+import csv
 import matplotlib.pyplot as plt
+from my_constant import *
+
 
 class Point:
     def __init__(self, x, y):
@@ -14,31 +17,35 @@ class Point:
         self.x = x
         self.y = y
 
+    # Tính khoảng cách đề-các giữa 2 points
     def distance(self, other):
         dx = self.x - other.x
         dy = self.y - other.y
         return math.sqrt(dx**2 + dy**2)
 
-point1 = Point(1, 2)
-point2 = Point(3, 4)
 
-# Create a figure and a subplot
-fig, ax = plt.subplots()
+class Node(Point):
+    def __init__(self, x, y, w=1, center=None, center_dis=-1,
+                 previous=None, neighbor=None, neighbor_dis=-1,
+                 trade_off=None):
+        super().__init__(x, y)
+        self.w = w
+        self.center = center  # Backbone
+        self.center_dis = center_dis
+        self.previous = previous  # Node
+        self.neighbor = neighbor
+        self.neighbor_dis = neighbor_dis
+        self.nonlink_checked_neighbor = []  # list of neighbor is checked
+        self.comp_list = []  # list of Node
+        self.trade_off = trade_off
 
-# Set the limits of the subplot
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 10)
 
-# Add the points to the plot
-ax.plot(point1.x, point1.y, 'ok')
-ax.plot(point2.x, point2.y, 'og')
+class Backbone(Point):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.S = []
 
-# Draw a line between the points
-ax.plot([point1.x, point2.x], [point1.y, point2.y], 'r-')
-
-list1 = [1, 2 , 3, 4, 5, 6, 7, 8, 9, 10]
-list2 = [1, 2, 3]
-list3 = []
-
-print(list3)
+a = [1, 3]
+b = []
+a += b
 
