@@ -45,25 +45,7 @@ class Backbone(Point):
         super().__init__(x, y)
         self.S = []
 
+a = [1, 3]
+b = []
+a += b
 
-import matplotlib.pyplot as plt
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Create a 2x2 figure
-fig, axs = plt.subplots(2, 2)
-
-# Set the title of the top-left subplot
-axs[0, 0].set_title("Top-Left")
-
-# Display an image on the top-right subplot
-axs[0, 1].imshow(np.random.random((10, 10)))
-
-# Set the title of the bottom-left subplot
-axs[1, 0].set_title("Bottom-Left")
-
-# Display an image on the bottom-right subplot
-axs[1, 1].imshow(np.random.random((10, 10)))
-
-plt.show()

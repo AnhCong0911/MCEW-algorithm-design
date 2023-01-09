@@ -26,7 +26,7 @@ class Point:
 
 class Node(Point):
     def __init__(self, x, y, w=1, center=None, center_dis=-1,
-                 neighbor=None, neighbor_dis=-1, trade_off=MAX):
+                 neighbor=None, neighbor_dis=-1, trade_off=None):
         super().__init__(x, y)
         self.w = w
         self.center = center  # Backbone
@@ -64,8 +64,12 @@ class Node(Point):
         self.neighbor_dis = neighbor_distance
 
     def update_component_list(self, other_node):
-        self.comp_list.append(other_node)
-        self.comp_list += other_node.comp_list
+        if(other_node not in self.comp_list):
+            self.comp_list.append(other_node)
+        if(len(other_node.comp_list) != 0):
+            for n in other_node.comp_list:
+                if(n not in self.comp_list):
+                    self.comp_list.append(n)
 
     def change_path(self, first_point):
         self.path = [first_point]
@@ -127,7 +131,6 @@ def get_point_list():
             point_list.append(Point(x, y))
     return point_list
 
-# HIEP
 # Creat bachbone_list, node_list from point_list, set weight cho cac node
 # vẽ các node và backbone lên mặt phẳng
 # Input: point_list
@@ -159,7 +162,7 @@ def create_and_visualize_blist_nlist_test(_axes, _list):
     return b_list, n_list
 
 
-def create_and_visualize_blist_nlist(_axes, _list):
+def create_and_visualize_blist_nlist(_axes1, _axes2, _list):
     b_list = []
     n_list = []
     b_index = [4, 11, 30, 64, 87]
@@ -171,9 +174,12 @@ def create_and_visualize_blist_nlist(_axes, _list):
         x, y = _list[i].get()
         if i in b_index:
             b_list.append(Backbone(x, y))
-            visualize_backbone(_axes, x, y)
+            visualize_backbone(_axes1, x, y)
+            visualize_backbone(_axes2, x, y)
+            
         else:
-            visualize_node(_axes, x, y)
+            visualize_node(_axes1, x, y)
+            visualize_node(_axes2, x, y)
             if i in n1_index:
                 n_list.append(Node(x, y, w=2))
             elif i in n2_index:
@@ -188,7 +194,7 @@ def create_and_visualize_blist_nlist(_axes, _list):
 # Find S - Tập node con của backbone b
 
 
-def find_S(_axes, _blist, _nlist):
+def find_S(_axes1, _axes2, _blist, _nlist):
     for n in _nlist:
         min_center = MAX
         backbone_of_n = None
@@ -199,10 +205,11 @@ def find_S(_axes, _blist, _nlist):
                 backbone_of_n = b
         n.center_dis = min_center
         n.center = backbone_of_n  # final min distance
-        draw_link(_axes, n, backbone_of_n)  # gọi hàm không có axes
+        n.path.append(backbone_of_n)
+        draw_slink(_axes1, n, backbone_of_n)  # gọi hàm không có axes
+        draw_slink(_axes2, n, backbone_of_n)
         backbone_of_n.S.append(n)
 
-# DUONG
 # Tìm node hàng xóm (neighbor) của từng node trong tập N
 # & tính khoảng cách hàng xóm ~ cost(Ni, Nj)
 # Input: N list
@@ -265,6 +272,9 @@ def trade_off_calculation(_list, _nlist):
     if(len(_list) == 0):
         for n in _nlist:
             n.compute_trade_off()
+    else:
+        for n in _list:
+            n.compute_trade_off()
     # DUY
     # Input: Node i, Node j
     # Output: True if accept, otherwise False
@@ -293,7 +303,6 @@ def compute_comp_w(_node):
 
 
 def jump_condition(_node, MAX_STEP):
-    # code here
     if(compute_jumpstep(_node) < MAX_STEP):
         return True
     else:
@@ -309,7 +318,7 @@ def compute_jumpstep(_node):
 
 
 def connect_link(axes, _nodei, _nodej):
-    draw_link(axes, _nodei, _nodej)
+    draw_nlink(axes, _nodei, _nodej)
     update_nodei(axes, _nodei, _nodej)
     update_nodej(_nodei, _nodej)
 
@@ -336,17 +345,19 @@ def update_nodei(_axes, _nodei, _nodej):
             if(path_old_i[i] == path_old_i[-2]):
                 # Remove link giữa node gần backbone nhất và backbone
                 remove_link(_axes, path_old_i[i], path_old_i[i].center)
-    _nodei.update_component_list(_nodej)  # Thêm j vào comp_list của i
     for n in _nodei.comp_list:
         n.update_component_list(_nodej)
         n.center = _nodei.center
         n.center_dis = n.distance(n.center)
+    _nodei.update_component_list(_nodej)  # Thêm j vào comp_list của i
+
 
 
 def update_nodej(_nodei, _nodej):
-    _nodej.update_component_list(_nodei)
     for n in _nodej.comp_list:
         n.update_component_list(_nodei)
+    _nodej.update_component_list(_nodei)
+
 
 # Xóa visulize giữa hai node
 
@@ -367,13 +378,13 @@ def ignore_link(_nodei, _nodej):
 
 
 def finish_algorithm():
-    cost = 0
+    my_show()
 
 
 def is_finish_algorithm(_nlist):
     end = True
     for n in _nlist:
-        if(n.trade_off < 0):
+        if(n.trade_off is None or n.trade_off < 0):
             end = False
             break
     return end
@@ -384,6 +395,7 @@ def update_considering_nodes_list(_nodei, _nodej):
     _list = [_nodei, _nodej]
     _list += _nodei.comp_list
     _list += _nodej.comp_list
+    return _list
 
 
 def MCEW(axes, _nlist):
