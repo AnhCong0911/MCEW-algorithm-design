@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['my_visualize.py', 'main.py', 'my_logic.py', 'mytest.py']
+recent_files = ['main.py', 'my_logic.py', 'Tree\\my_tree.py', 'Tree\\test_main.py', 'Tree\\test_logic.py']
 
 [main]
 version = 0.2.0

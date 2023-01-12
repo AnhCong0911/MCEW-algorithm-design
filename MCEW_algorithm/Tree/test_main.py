@@ -2,12 +2,14 @@
 import random
 import csv
 from my_constant import *
-from my_logic import *
-from my_visualize import *
-PATH = 'point_list.csv'
+from test_logic import *
+from test_visualize import *
+from my_tree import *
+
+PATH = '.csv'
 
 
-def main():
+def tree():
     point_list = []
     blist = []
     nlist = []
@@ -41,4 +43,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    tree()

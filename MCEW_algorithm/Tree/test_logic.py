@@ -3,6 +3,7 @@ import math
 import random
 import csv
 from my_visualize import *
+from my_tree import *
 
 
 class Point:
@@ -17,99 +18,99 @@ class Point:
         self.x = x
         self.y = y
 
-    def equal(self, other_node):
-        if(self.x == other_node.x and self.y == other_node.y):
-            return True
-        return False
+#     def equal(self, other_node):
+#         if(self.x == other_node.x and self.y == other_node.y):
+#             return True
+#         return False
 
-    # Tính khoảng cách đề-các giữa 2 points
-    def distance(self, other):
-        dx = self.x - other.x
-        dy = self.y - other.y
-        return math.sqrt(dx**2 + dy**2)
-
-
-class Node(Point):
-    def __init__(self, x, y, w=1, center=None, center_dis=-1, neighbor=None,
-                 neighbor_dis=-1, changed_path=False, trade_off=None):
-        super().__init__(x, y)
-        self.w = w
-        self.center = center  # Backbone
-        self.center_dis = center_dis
-        self.neighbor = neighbor
-        self.neighbor_dis = neighbor_dis
-        self.nonlink_checked_neighbor = []  # list of neighbor is checked
-        self.path = []
-        self.changed_path = changed_path
-        self.comp_list = []  # list of Node
-        self.trade_off = trade_off
-
-    # DUY
-    def cost(self, _node):
-        # code here
-        # Tính cost theo yêu cầu đề bài
-        # cost = round(0.3 x distance())
-        return round(0.3 * self.distance(_node))
-
-        # Tìm hàng xóm của Node
-        # Hàng xóm: (Nodes in Nlist) - (self $ comp_list(_node))
-    def find_neighbor_of_node(self, _nlist):
-        temp1 = []
-        temp1 = self.comp_list + self.nonlink_checked_neighbor
-        temp1.append(self)
-        temp2 = [i for i in _nlist if i not in set(temp1)]
-        # code here
-        neighbor_of_node = None
-        neighbor_distance = MAX
-        for n in temp2:
-            dis = self.distance(n)
-            if(dis < neighbor_distance):
-                neighbor_distance = dis
-                neighbor_of_node = n
-        self.neighbor = neighbor_of_node
-        self.neighbor_dis = neighbor_distance
-
-    def update_component_list(self, other_node):
-        if(other_node not in self.comp_list):
-            self.comp_list.append(other_node)
-        if(len(other_node.comp_list) != 0):
-            for n in other_node.comp_list:
-                if((n not in self.comp_list) and
-                   (not self.equal(n))):
-                    self.comp_list.append(n)
-
-    def change_path_i(self, first_point):
-        self.path = [first_point]
-        self.path += first_point.path
-        self.changed_path = True # Thay doi changed_path value here
-
-    def change_path_comp(self, _nodei):
-        path = self.path
-        # if(len(path) == 1 and isinstance(path[0], Backbone)):
-        #     self.path = [_nodei]
-        #     self.path += _nodei.path
-        #     return
-        index = None
-        for i in range(len(path)-1):
-            if(path[i].changed_path == True):
-                index = i
-                break
-        if(index == None):
-            raise TypeError("Index is None!")
-        del self.path[index+1:]
-        self.path += path[index].path
-        self.changed_path = True # Thay doi changed_path value cua component
-
-    def compute_trade_off(self):
-        cost_ij = round(0.3 * self.distance(self.neighbor))
-        min_node, min_component_cost = comp_cost(self)
-        self.trade_off = cost_ij - min_component_cost  # Thoa hiep duoc tinh toan o day
+#     # Tính khoảng cách đề-các giữa 2 points
+#     def distance(self, other):
+#         dx = self.x - other.x
+#         dy = self.y - other.y
+#         return math.sqrt(dx**2 + dy**2)
 
 
-class Backbone(Point):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.S = []
+# class Node(Point):
+#     def __init__(self, x, y, w=1, center=None, center_dis=-1, neighbor=None,
+#                  neighbor_dis=-1, changed_path=False, trade_off=None):
+#         super().__init__(x, y)
+#         self.w = w
+#         self.center = center  # Backbone
+#         self.center_dis = center_dis
+#         self.neighbor = neighbor
+#         self.neighbor_dis = neighbor_dis
+#         self.nonlink_checked_neighbor = []  # list of neighbor is checked
+#         self.path = []
+#         self.changed_path = changed_path
+#         self.comp_list = []  # list of Node
+#         self.trade_off = trade_off
+
+#     # DUY
+#     def cost(self, _node):
+#         # code here
+#         # Tính cost theo yêu cầu đề bài
+#         # cost = round(0.3 x distance())
+#         return round(0.3 * self.distance(_node))
+
+#         # Tìm hàng xóm của Node
+#         # Hàng xóm: (Nodes in Nlist) - (self $ comp_list(_node))
+#     def find_neighbor_of_node(self, _nlist):
+#         temp1 = []
+#         temp1 = self.comp_list + self.nonlink_checked_neighbor
+#         temp1.append(self)
+#         temp2 = [i for i in _nlist if i not in set(temp1)]
+#         # code here
+#         neighbor_of_node = None
+#         neighbor_distance = MAX
+#         for n in temp2:
+#             dis = self.distance(n)
+#             if(dis < neighbor_distance):
+#                 neighbor_distance = dis
+#                 neighbor_of_node = n
+#         self.neighbor = neighbor_of_node
+#         self.neighbor_dis = neighbor_distance
+
+#     def update_component_list(self, other_node):
+#         if(other_node not in self.comp_list):
+#             self.comp_list.append(other_node)
+#         if(len(other_node.comp_list) != 0):
+#             for n in other_node.comp_list:
+#                 if((n not in self.comp_list) and
+#                    (not self.equal(n))):
+#                     self.comp_list.append(n)
+
+#     def change_path_i(self, first_point):
+#         self.path = [first_point]
+#         self.path += first_point.path
+#         self.changed_path = True # Thay doi changed_path value here
+
+#     def change_path_comp(self, _nodei):
+#         path = self.path
+#         # if(len(path) == 1 and isinstance(path[0], Backbone)):
+#         #     self.path = [_nodei]
+#         #     self.path += _nodei.path
+#         #     return
+#         index = None
+#         for i in range(len(path)-1):
+#             if(path[i].changed_path == True):
+#                 index = i
+#                 break
+#         if(index == None):
+#             raise TypeError("Index is None!")
+#         del self.path[index+1:]
+#         self.path += path[index].path
+#         self.changed_path = True # Thay doi changed_path value cua component
+
+#     def compute_trade_off(self):
+#         cost_ij = round(0.3 * self.distance(self.neighbor))
+#         min_node, min_component_cost = comp_cost(self)
+#         self.trade_off = cost_ij - min_component_cost  # Thoa hiep duoc tinh toan o day
+
+
+# class Backbone(Point):
+#     def __init__(self, x, y):
+#         super().__init__(x, y)
+#         self.S = []
 
 
 # create MAX_POINTS points randomly
@@ -163,33 +164,6 @@ def get_point_list(path):
 # Input: point_list
 # Output: b_list, n_list
 
-# test: 10 Points
-
-
-def create_and_visualize_blist_nlist_test(_axes, _list):
-    b_list = []
-    n_list = []
-    b_index = [2, 8]
-    n1_index = [3, 6, 9]
-    n2_index = [4, 11, 12]
-    n_index = n1_index + n2_index
-    for i in range(MAX_POINTS):
-        x, y = _list[i].get()
-        if i in b_index:
-            b_list.append(Backbone(x, y))
-            visualize_backbone(_axes, x, y)
-        else:
-            visualize_node(_axes, x, y)
-            if i in n1_index:
-                n_list.append(Node(x, y, w=2))
-            elif i in n2_index:
-                n_list.append(Node(x, y, w=3))
-            else:
-                n_list.append(Node(x, y))
-    return b_list, n_list
-
-# Create blist, nlist with n_index 'weight' list
-
 
 def create_and_visualize_blist_nlist(_axes, _list, b_index, n_index):
     b_list = []
@@ -229,11 +203,9 @@ def find_S(_axes, _blist, _nlist):
             if(nb_dis < min_center):
                 min_center = nb_dis
                 backbone_of_n = b
-        n.center_dis = min_center
-        n.center = backbone_of_n  # final min distance
-        n.path.append(backbone_of_n)
-        draw_slink(_axes, n, backbone_of_n)  # gọi hàm không có axes
-        backbone_of_n.S.append(n)
+        backbone_of_n.add_child(n)
+        n.center = backbone_of_n  # Create center
+        draw_slink(_axes, n, backbone_of_n)
 
 # Tìm node hàng xóm (neighbor) của từng node trong tập N
 # & tính khoảng cách hàng xóm ~ cost(Ni, Nj)
