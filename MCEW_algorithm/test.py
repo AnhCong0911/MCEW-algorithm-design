@@ -1,51 +1,45 @@
 # -*- coding: utf-8 -*-
-import math
 import csv
-import matplotlib.pyplot as plt
 from my_constant import *
+from my_logic import *
+from my_visualize import *
+PATH = 'test_points.csv'
 
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+def main():
+    point_list = []
+    blist = []
+    nlist = []
+    b_index = [5, 9]
+    n1_index = [0, 7]
+    n2_index = [3, 5]
+    n3_index = [13]
+    x_max = 30
+    y_max = 30
+    n_index = [n1_index, n2_index, n3_index]
 
-    def get(self):
-        return (self.x, self.y)
+    # Create a plane
+    fig, ax = create_plane(x_max, y_max)
 
-    def set(self, x, y):
-        self.x = x
-        self.y = y
+    # Create and save a list
+    # point_list = create_random_points(15, x_max, y_max)
+    # save_point_list_into_csv_file(point_list, PATH)
+    
+    # Get list from existing csv file
+    point_list = get_point_list(PATH)
+    
+    # Test
+    # blist, nlist = create_and_visualize_blist_nlist_test(ax, point_list)
 
-    # Tính khoảng cách đề-các giữa 2 points
-    def distance(self, other):
-        dx = self.x - other.x
-        dy = self.y - other.y
-        return math.sqrt(dx**2 + dy**2)
-
-
-class Node(Point):
-    def __init__(self, x, y, w=1, center=None, center_dis=-1,
-                 previous=None, neighbor=None, neighbor_dis=-1,
-                 trade_off=None):
-        super().__init__(x, y)
-        self.w = w
-        self.center = center  # Backbone
-        self.center_dis = center_dis
-        self.previous = previous  # Node
-        self.neighbor = neighbor
-        self.neighbor_dis = neighbor_dis
-        self.nonlink_checked_neighbor = []  # list of neighbor is checked
-        self.comp_list = []  # list of Node
-        self.trade_off = trade_off
+    # Create blist, nlist
+    blist, nlist = create_and_visualize_blist_nlist(ax, point_list,
+                                                    b_index, n_index)
+    # Find neighbors
+    find_S(ax, blist, nlist)
+    
+    # MCEW algorithm
+    MCEW(ax, nlist)
 
 
-class Backbone(Point):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.S = []
-
-a = [1, 3]
-b = []
-a += b
-
+if __name__ == '__main__':
+    main()

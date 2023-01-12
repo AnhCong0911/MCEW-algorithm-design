@@ -17,6 +17,11 @@ class Point:
         self.x = x
         self.y = y
 
+    def equal(self, other_node):
+        if(self.x == other_node.x and self.y == other_node.y):
+            return True
+        return False
+
     # Tính khoảng cách đề-các giữa 2 points
     def distance(self, other):
         dx = self.x - other.x
@@ -25,16 +30,17 @@ class Point:
 
 
 class Node(Point):
-    def __init__(self, x, y, w=1, center=None, center_dis=-1,
-                 neighbor=None, neighbor_dis=-1, trade_off=None):
+    def __init__(self, x, y, w=1, center=None, center_dis=-1, neighbor=None,
+                 neighbor_dis=-1, changed_path=False, trade_off=None):
         super().__init__(x, y)
         self.w = w
         self.center = center  # Backbone
         self.center_dis = center_dis
         self.neighbor = neighbor
         self.neighbor_dis = neighbor_dis
-        self.path = []
         self.nonlink_checked_neighbor = []  # list of neighbor is checked
+        self.path = []
+        self.changed_path = changed_path
         self.comp_list = []  # list of Node
         self.trade_off = trade_off
 
@@ -68,12 +74,31 @@ class Node(Point):
             self.comp_list.append(other_node)
         if(len(other_node.comp_list) != 0):
             for n in other_node.comp_list:
-                if(n not in self.comp_list):
+                if((n not in self.comp_list) and
+                   (not self.equal(n))):
                     self.comp_list.append(n)
 
-    def change_path(self, first_point):
+    def change_path_i(self, first_point):
         self.path = [first_point]
         self.path += first_point.path
+        self.changed_path = True # Thay doi changed_path value here
+
+    def change_path_comp(self, _nodei):
+        path = self.path
+        # if(len(path) == 1 and isinstance(path[0], Backbone)):
+        #     self.path = [_nodei]
+        #     self.path += _nodei.path
+        #     return
+        index = None
+        for i in range(len(path)-1):
+            if(path[i].changed_path == True):
+                index = i
+                break
+        if(index == None):
+            raise TypeError("Index is None!")
+        del self.path[index+1:]
+        self.path += path[index].path
+        self.changed_path = True # Thay doi changed_path value cua component
 
     def compute_trade_off(self):
         cost_ij = round(0.3 * self.distance(self.neighbor))
@@ -92,14 +117,14 @@ class Backbone(Point):
 # Output: List of Points
 
 
-def create_random_points():
+def create_random_points(number=MAX_POINTS, x_max=X_MAX, y_max=Y_MAX):
     # Create an empty list to store the points
     point_list = []
 
     # Generate  random points
-    for i in range(MAX_POINTS):
-        x = random.randint(0, X_MAX)
-        y = random.randint(0, Y_MAX)
+    for i in range(number):
+        x = random.randint(0, x_max)
+        y = random.randint(0, y_max)
         point = Point(x, y)
         point_list.append(point)
 
@@ -110,8 +135,10 @@ def create_random_points():
 # Output:
 
 
-def save_point_list_into_csv_file(_list):
-    with open('point_list.csv', 'w', newline='') as csvfile:
+def save_point_list_into_csv_file(_list, path):
+    if(len(path) == 0):
+        raise TypeError("Need to have the file path.")
+    with open(path, 'w', newline='') as csvfile:
         # Create a CSV writer object
         writer = csv.writer(csvfile)
 
@@ -120,9 +147,9 @@ def save_point_list_into_csv_file(_list):
             writer.writerow(point.get())
 
 
-def get_point_list():
+def get_point_list(path):
     point_list = []
-    with open('point_list.csv', 'r') as f:
+    with open(path, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             x_str, y_str = row
@@ -161,25 +188,24 @@ def create_and_visualize_blist_nlist_test(_axes, _list):
                 n_list.append(Node(x, y))
     return b_list, n_list
 
+# Create blist, nlist with n_index 'weight' list
 
-def create_and_visualize_blist_nlist(_axes1, _axes2, _list):
+
+def create_and_visualize_blist_nlist(_axes, _list, b_index, n_index):
     b_list = []
     n_list = []
-    b_index = [4, 11, 30, 64, 87]
-    n1_index = [0, 7, 8]
-    n2_index = [22, 71, 28, 66, 54]
-    n3_index = [3, 47]
+    n1_index = n_index[0]
+    n2_index = n_index[1]
+    n3_index = n_index[2]
     n_index = n1_index + n2_index + n3_index
-    for i in range(MAX_POINTS):
+    for i in range(len(_list)):
         x, y = _list[i].get()
         if i in b_index:
             b_list.append(Backbone(x, y))
-            visualize_backbone(_axes1, x, y)
-            visualize_backbone(_axes2, x, y)
-            
+            visualize_backbone(_axes, x, y)
+
         else:
-            visualize_node(_axes1, x, y)
-            visualize_node(_axes2, x, y)
+            visualize_node(_axes, x, y)
             if i in n1_index:
                 n_list.append(Node(x, y, w=2))
             elif i in n2_index:
@@ -194,7 +220,7 @@ def create_and_visualize_blist_nlist(_axes1, _axes2, _list):
 # Find S - Tập node con của backbone b
 
 
-def find_S(_axes1, _axes2, _blist, _nlist):
+def find_S(_axes, _blist, _nlist):
     for n in _nlist:
         min_center = MAX
         backbone_of_n = None
@@ -206,8 +232,7 @@ def find_S(_axes1, _axes2, _blist, _nlist):
         n.center_dis = min_center
         n.center = backbone_of_n  # final min distance
         n.path.append(backbone_of_n)
-        draw_slink(_axes1, n, backbone_of_n)  # gọi hàm không có axes
-        draw_slink(_axes2, n, backbone_of_n)
+        draw_slink(_axes, n, backbone_of_n)  # gọi hàm không có axes
         backbone_of_n.S.append(n)
 
 # Tìm node hàng xóm (neighbor) của từng node trong tập N
@@ -320,7 +345,7 @@ def compute_jumpstep(_node):
 def connect_link(axes, _nodei, _nodej):
     draw_nlink(axes, _nodei, _nodej)
     update_nodei(axes, _nodei, _nodej)
-    update_nodej(_nodei, _nodej)
+    update_nodej(axes, _nodei, _nodej)
 
 # Cập nhât thông tin nodei theo nodej
 
@@ -331,29 +356,39 @@ def update_nodei(_axes, _nodei, _nodej):
         _nodei.center)  # Tính lại KC đến center mới
     # Update path cua _nodei
     path_old_i = _nodei.path
-    _nodei.change_path(_nodej)
+    _nodei.change_path_i(_nodej)
+    # Remove link
     if (len(path_old_i) == 1 and isinstance(path_old_i[0], Backbone)):
         # Nếu path chứa mỗi Backbone thì remove ngay
         remove_link(_axes, _nodei, path_old_i[0])
     else:
-        # Update path của các node trên path từ i về center_old(i)
         for i in range(len(path_old_i) - 1):
-            if(i == 0):
-                path_old_i[0].change_path(_nodei)
+            if (i == 0):
+                path_old_i[0].path = [_nodei]
+                path_old_i[0].path += _nodei.path
+                path_old_i[0].changed_path = True
             else:
-                path_old_i[i].change_path(path_old_i[i-1])
+                path_old_i[i].path = [path_old_i[i-1]]
+                path_old_i[i].path += path_old_i[i-1].path
+                path_old_i[i].changed_path = True
             if(path_old_i[i] == path_old_i[-2]):
                 # Remove link giữa node gần backbone nhất và backbone
                 remove_link(_axes, path_old_i[i], path_old_i[i].center)
+    # Update comp_list
     for n in _nodei.comp_list:
+        if(n.changed_path != True):
+            n.change_path_comp(_nodei)
         n.update_component_list(_nodej)
         n.center = _nodei.center
         n.center_dis = n.distance(n.center)
+    # Reset to default
+    for n in _nodei.comp_list:
+        n.changed_path = False
+    _nodei.changed_path = False
     _nodei.update_component_list(_nodej)  # Thêm j vào comp_list của i
 
 
-
-def update_nodej(_nodei, _nodej):
+def update_nodej(_axes, _nodei, _nodej):
     for n in _nodej.comp_list:
         n.update_component_list(_nodei)
     _nodej.update_component_list(_nodei)
@@ -393,8 +428,12 @@ def is_finish_algorithm(_nlist):
 def update_considering_nodes_list(_nodei, _nodej):
     _list = []
     _list = [_nodei, _nodej]
-    _list += _nodei.comp_list
-    _list += _nodej.comp_list
+    for n in _nodei.comp_list:
+        if(n not in _list):
+            _list.append(n)
+    for m in _nodej.comp_list:
+        if(m not in _list):
+            _list.append(m)
     return _list
 
 
@@ -404,12 +443,13 @@ def MCEW(axes, _nlist):
         find_neighbor(considering_nodes_list, _nlist)
         trade_off_calculation(considering_nodes_list, _nlist)
         _nodei, min_tradeoff = min_trade_off(_nlist)
-        visualize_considering_node(axes, _nodei.x, _nodei.y)
         _nodej = _nodei.neighbor
+        mark_node_ij(axes, _nodei, _nodej)
         if(weight_condition(_nodei, _nodej, W)
                 and jump_condition(_nodei, MAX)):  # jump = vo cung
             connect_link(axes, _nodei, _nodej)
         else:
             ignore_link(_nodei, _nodej)
+        remove_mark(axes, _nodei, _nodej)
         considering_nodes_list = update_considering_nodes_list(_nodei, _nodej)
     finish_algorithm()
