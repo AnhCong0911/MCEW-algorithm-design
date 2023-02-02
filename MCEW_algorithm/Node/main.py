@@ -2,14 +2,12 @@
 import random
 import csv
 from my_constant import *
-from test_logic import *
-from test_visualize import *
-from my_tree import *
-
-PATH = '.csv'
+from my_logic import *
+from my_visualize import *
+PATH = 'point_list.csv'
 
 
-def tree():
+def main():
     point_list = []
     blist = []
     nlist = []
@@ -28,9 +26,6 @@ def tree():
     
     # Get list from existing csv file
     point_list = get_point_list(PATH)
-    
-    # Test
-    # blist, nlist = create_and_visualize_blist_nlist_test(ax, point_list)
 
     # Create blist, nlist
     blist, nlist = create_and_visualize_blist_nlist(ax, point_list,
@@ -43,4 +38,4 @@ def tree():
 
 
 if __name__ == '__main__':
-    tree()
+    main()
