@@ -446,7 +446,7 @@ def MCEW(axes, _nlist):
         _nodej = _nodei.neighbor
         mark_node_ij(axes, _nodei, _nodej)
         if(weight_condition(_nodei, _nodej, W)
-                and jump_condition(_nodei, _nodej, 4)):  # jump = vo cung
+                and jump_condition(_nodei, _nodej, MAX)):  # jump = vo cung
             connect_link(axes, _nodei, _nodej)
         else:
             ignore_link(_nodei, _nodej)
