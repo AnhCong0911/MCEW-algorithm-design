@@ -14,10 +14,10 @@ The project uses the [Matplotlib](https://matplotlib.org/stable/index.html#) fra
 * MCEW.drawio: the MCEW algorithm flowchart
 * .image folder: the result images
 ### Results
-Create points on the plane.
+Create points on the plane.  
 <img src="https://github.com/AnhCong0911/MCEW-algorithm-design/blob/master/.image/Points.png" alt="Point" width="350" />
 
-Find access nodes connected to each backbone node.
+Find access nodes connected to each backbone node.  
 <img src="https://github.com/AnhCong0911/MCEW-algorithm-design/blob/master/.image/S.png" alt="s set" width="350" /> 
 
 The access network is obtained after applying the MCEW algorithm.  
