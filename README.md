@@ -15,10 +15,16 @@ The project uses the [Matplotlib](https://matplotlib.org/stable/index.html#) fra
 * .image folder: the result images
 ### Results
 Create points on the plane.  
-<img src="https://github.com/AnhCong0911/MCEW-algorithm-design/blob/master/.image/Points.png" alt="Point" width="350" />
+<p align="center">
+<img src=".image/Points.png" alt="simulation architecture" width="500" />  
+</p>
 
 Find access nodes connected to each backbone node.  
-<img src="https://github.com/AnhCong0911/MCEW-algorithm-design/blob/master/.image/S.png" alt="s set" width="350" /> 
+<p align="center">
+<img src=".image/S.png" alt="simulation architecture" width="500" />  
+</p>
 
 The access network is obtained after applying the MCEW algorithm.  
-<img src="https://github.com/AnhCong0911/MCEW-algorithm-design/blob/master/.image/Algorithm%20result.png" alt="result" width="350" />  
+<p align="center">
+<img src=".image/Algorithm result.png" alt="simulation architecture" width="500" />  
+</p>
